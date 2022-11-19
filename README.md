@@ -20,7 +20,7 @@ This is the server side(backend) of the [vue_admin_system] currently uses the te
 
 ### Participatory Contributions
 #### Main Contributors
-1. [TheWangYang](https://gitee.com/SCKDKT)
+1. [TheWangYang](https://github.com/TheWangYang)
 #### Other Contributors
 
 
