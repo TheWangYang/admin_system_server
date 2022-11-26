@@ -3,6 +3,7 @@ from sanic.response import json, file, empty
 from data_process import *
 import os
 import json as j_son
+from detection_process import backend_detection_picture
 
 # 创建app实例对象
 app = Sanic(__name__)
@@ -84,6 +85,15 @@ async def picture_edit(request):
                                                          data['picture_id']))
     else:
         return json({'result': "userId is None"})
+
+
+@app.post('/detection_picture')
+async def detection_picture(request):
+    data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
+    print("@@@ : ", data['detectionPictureSavePath'])
+    # 调用图片检测函数
+    annotations_list = await backend_detection_picture(data['detectionPictureSavePath'])
+    return json({'annotations_list': annotations_list})
 
 
 # 设置提供用户信息的接口

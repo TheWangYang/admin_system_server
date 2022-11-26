@@ -38,22 +38,13 @@ def get_picture_data_obj_arr(connect, user_id):
         # 遍历每行数据
         for row in rows:
             # 对每行数据得到对应的行数据json对象
-            obj_result = {}
-
-            obj_result["picture_id"] = str(row[0])
-            obj_result["picture_name"] = str(row[1])
-            obj_result["created_time"] = str(row[2])
-            obj_result["update_time"] = str(row[3])
-            obj_result["picture_width"] = str(row[4])
-            obj_result["picture_height"] = str(row[5])
-            obj_result["picture_size"] = str(row[6])
-            obj_result["picture_format"] = str(row[7])
-            obj_result["uploader_id"] = str(row[8])
-            obj_result["uploader_name"] = str(row[9])
-            obj_result["description"] = str(row[10])
-            obj_result["is_test"] = str(row[11])
-            obj_result["save_path"] = str(row[12])
-            obj_result["result_path"] = str(row[13])
+            obj_result = {"picture_id": str(row[0]), "picture_name": str(row[1]), "created_time": str(row[2]),
+                          "update_time": str(row[3]), "picture_width": str(row[4]), "picture_height": str(row[5]),
+                          "picture_size": str(row[6]), "picture_format": str(row[7]), "uploader_id": str(row[8]),
+                          "uploader_name": str(row[9]), "description": str(row[10]), "is_test": str(row[11]),
+                          "save_path": str(row[12]), "result_path": str(row[13]), "shooting_environment": str(row[14]),
+                          "shooting_direction": str(row[15]), "shooting_quality": str(row[16]),
+                          "is_detection": str(row[17])}
 
             object_list.append(obj_result)
         # 返回图片数据数组
@@ -91,19 +82,21 @@ def add_picture_by_userinfo(connect, user_id, user_name):
         if image_obj != {}:
             cursor = connect.cursor()
             print("cursor : ", cursor)
-            sql = "insert into tbl_picture(picture_name, created_time, update_time, picture_width, picture_height, picture_size, picture_format, uploader_id, uploader_name, description, is_test, save_path, result_path) values('" + str(
+            sql = "insert into tbl_picture(picture_name, created_time, update_time, picture_width, picture_height, picture_size, picture_format, uploader_id, uploader_name, description, is_test, save_path, result_path, shooting_environment, shooting_direction, shooting_quality, is_detection) values('" + str(
                 image_obj.get('picture_name')) + "', '" + str(image_obj.get('created_time')) + "','" + str(
                 image_obj.get('update_time')) + "', '" + str(image_obj.get('picture_width')) + "', '" + str(
                 image_obj.get('picture_height')) + "','" + str(image_obj.get('picture_size')) + "','" + str(
                 image_obj.get('picture_format')) + "','" + str(image_obj.get('uploader_id')) + "','" + str(
                 image_obj.get('uploader_name')) + "','" + str(image_obj.get('description')) + "','" + str(
                 image_obj.get('is_test')) + "','" + str(image_obj.get('save_path')) + "','" + str(
-                image_obj.get('result_path')) + "')"  # sql语句
+                image_obj.get('result_path')) + "','" + str(
+                image_obj.get('shooting_environment')) + "','" + str(image_obj.get('shooting_direction')) + "','" + str(
+                image_obj.get('shooting_quality')) + "','" + str(image_obj.get('is_detection')) + "')"  # sql语句
             flag = cursor.execute(sql)
-            print("flag : ", flag)
             if flag == 1:
                 # 插入成功，返回图片的uri
-                return {'new_image_uri': SERVER_PREFIX + image_obj.get('save_path')}
+                return {'new_image_uri': SERVER_PREFIX + image_obj.get('save_path'),
+                        'save_path': image_obj.get('save_path')}
             else:
                 # 插入失败，删除拍摄的照片，并返回空字符串
                 return {'new_image_uri': ""}
@@ -126,8 +119,8 @@ def delete_picture_by_userid_and_pictureid(connect, user_id, picture_id, save_pa
         # 删除文件
         delete_file(save_abs_path)
         delete_file(result_abs_path)
-        print("@@@ : ", ensure_dir_exists(save_abs_path))
-        print("--- : ", ensure_dir_exists(result_abs_path))
+        # print("@@@ : ", ensure_dir_exists(save_abs_path))
+        # print("--- : ", ensure_dir_exists(result_abs_path))
         # 保证原始文件已经删除
         if ensure_dir_exists(save_abs_path) is False:
             # 表示原始图片删除成功
@@ -135,7 +128,8 @@ def delete_picture_by_userid_and_pictureid(connect, user_id, picture_id, save_pa
             if ensure_dir_exists(result_abs_path) is False:
                 # 表示服务器端图片文件已经删除，下面删除数据库中数据
                 cursor = connect.cursor()
-                sql = "delete from tbl_picture where uploader_id='" + str(user_id) + "' and picture_id='" + str(picture_id) + "'"
+                sql = "delete from tbl_picture where uploader_id='" + str(user_id) + "' and picture_id='" + str(
+                    picture_id) + "'"
                 flag = cursor.execute(sql)
                 if flag == 1:  # 表示删除成功
                     return {'result': "success"}
