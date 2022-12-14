@@ -3,5 +3,8 @@
 out
 gen
 .pth
-static/images/
+.jpg
+static/images/database
+static/images/done
+static/images/todo
 detection_process/checkpoints/
