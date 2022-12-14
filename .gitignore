@@ -1,7 +1,7 @@
-# Created by .ignore support plugin (hsz.mobi)
-### Example user template
-
-# IntelliJ project files
+# ignore files
 .idea
 out
 gen
+.pth
+static/images/
+detection_process/checkpoints/

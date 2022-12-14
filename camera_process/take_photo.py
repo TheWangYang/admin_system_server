@@ -5,15 +5,14 @@ from utils import PATH_SUFFIX
 from utils import PATH_NEW_PICTURE_SUFFIX
 
 
-def get_photo(user_id, picture_num, user_name):
+def get_photo(user_id, picture_last_key, user_name):
     try:
-        # 得到新拍摄图片名
-        picture_num += 1
-        new_file_name = str(user_id) + "_" + str(picture_num) + ".jpg"
+        # 得到新拍摄图片名，设置为当前数据库中存在的图片的最后一个主键值+1
+        picture_last_key += 1
+        new_file_name = str(user_id) + "_" + str(picture_last_key) + ".jpg"
         # 调用底层拍摄图片接口得到图片，这里首先使用file文件操作模拟
         file_dir = server_abs_path() + PATH_NEW_PICTURE_SUFFIX
         save_dir = server_abs_path() + PATH_SUFFIX
-        print("server_abs_path() : ", server_abs_path())
         # 新图片已经生成并保存到相应文件目录中
         new_file_path, created_time = copy_file(file_dir, save_dir, new_file_name)
         if new_file_path != "error":

@@ -90,10 +90,9 @@ async def picture_edit(request):
 @app.post('/detection_picture')
 async def detection_picture(request):
     data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
-    print("@@@ : ", data['detectionPictureSavePath'])
     # 调用图片检测函数
-    annotations_list = await backend_detection_picture(data['detectionPictureSavePath'])
-    return json({'annotations_list': annotations_list})
+    annotations_list, detection_relative_result_path = await backend_detection_picture(data)
+    return json({'annotations_list': annotations_list, 'detection_relative_result_path': detection_relative_result_path})
 
 
 # 设置提供用户信息的接口
@@ -104,7 +103,6 @@ async def get_user_data(request):
     connect = get_connect()
     # 得到是否存在用户，如果存在直接返回用户信息
     curr_user = get_user_data_obj_arr(connect, data)
-    # print("curr_user : ", curr_user)
     return json(curr_user)
 
 

@@ -57,10 +57,10 @@ def get_picture_data_obj_arr(connect, user_id):
 
 
 # 得到当前该用户拍摄的图片数量
-def get_picture_number_by_userid(connect, user_id):
+def get_last_key_by_userid(connect, user_id):
     try:
         cursor = connect.cursor()
-        sql = "select count(*) from tbl_picture where uploader_id='" + str(user_id) + "'"
+        sql = "select max(picture_id) from tbl_picture where uploader_id='" + str(user_id) + "'"
         cursor.execute(sql)
         rows = cursor.fetchall()
         row = rows[0]
@@ -75,10 +75,12 @@ def get_picture_number_by_userid(connect, user_id):
 # 调用后端拍摄图像系统得到一张新的图片
 def add_picture_by_userinfo(connect, user_id, user_name):
     try:
-        # 在调用拍摄图片之前，得到当前用户todo图片总数据量
-        picture_num = get_picture_number_by_userid(connect, user_id)
+        # 在调用拍摄图片之前，得到当前用户获得图片的最后一个主键值
+        picture_last_key = get_last_key_by_userid(connect, user_id)
+        if picture_last_key is None:
+            picture_last_key = 1
         # 调用后端的拍摄图片方法，得到拍摄的图片信息
-        image_obj = get_photo(user_id, picture_num, user_name)
+        image_obj = get_photo(user_id, picture_last_key, user_name)
         if image_obj != {}:
             cursor = connect.cursor()
             print("cursor : ", cursor)
@@ -163,6 +165,32 @@ def edit_picture_by_userid_and_pictureid(connect, description, user_id, picture_
             return {'result': "failed"}
     except Exception as e:
         print("edit_picture_by_userid_and_pictureid inner error : ", e)
+        print(f'error file:{e.__traceback__.tb_frame.f_globals["__file__"]}')
+        print(f"error line:{e.__traceback__.tb_lineno}")
+        # 出现错误，返回error
+        return {'result': "error"}
+
+
+# 修改图片的拍摄环境/拍摄角度/拍摄质量
+def update_picture_respath_env_direction_quality(connect, result_path, env, direction, quality, user_id,
+                                                 picture_save_path):
+    try:
+        cursor = connect.cursor()
+        sql = "UPDATE tbl_picture SET result_path='" + result_path \
+              + "', shooting_environment='" + env \
+              + "', shooting_direction='" + direction \
+              + "', shooting_quality='" + quality \
+              + "', is_detection='是'" \
+              + " WHERE uploader_id='" + str(user_id) \
+              + "' and save_path='" + str(picture_save_path) + "'"
+        flag = cursor.execute(sql)
+        if flag == 1:
+            # 修改成功，返回成功结果
+            return {'result': "success"}
+        else:
+            return {'result': "failed"}
+    except Exception as e:
+        print("update_picture_respath_env_direction_quality inner error : ", e)
         print(f'error file:{e.__traceback__.tb_frame.f_globals["__file__"]}')
         print(f"error line:{e.__traceback__.tb_lineno}")
         # 出现错误，返回error
