@@ -1,34 +1,39 @@
 from sanic import Sanic
 from sanic.response import json, file, empty
 from data_process import *
-import os
+
 import json as j_son
 from detection_process import backend_detection_picture
 
 # 创建app实例对象
 app = Sanic(__name__)
 
-
-# 得到未检测图片函数
-@app.get("/static/images/todo/<img_file_name:path>")
-async def todo_image(_, img_file_name):
-    # 每次请求的时候得到所有文件列表
-    img_file_names = tuple(*[files for (_, _, files) in os.walk('./static/images/todo')])
-    if img_file_name in img_file_names:
-        return await file('./static/images/todo/' + img_file_name)
-    return empty()
-
-
-@app.get("/static/images/done/<img_file_name:path>")
-async def done_image(_, img_file_name):
-    # 每次请求的时候得到所有文件列表
-    img_file_names = tuple(*[files for (_, _, files) in os.walk('./static/images/done')])
-    if img_file_name in img_file_names:
-        return await file('./static/images/done/' + img_file_name)
-    return empty()
+# # 得到未检测图片函数
+# @app.get("/static/images/todo/<img_file_name:path>")
+# async def todo_image(_, img_file_name):
+#     # 每次请求的时候得到所有文件列表
+#     img_file_names = tuple(*[files for (_, _, files) in os.walk('./static/images/todo')])
+#     if img_file_name in img_file_names:
+#         return await file('./static/images/todo/' + img_file_name)
+#     return empty()
+#
+#
+# @app.get("/static/images/done/<img_file_name:path>")
+# async def done_image(_, img_file_name):
+#     # 每次请求的时候得到所有文件列表
+#     img_file_names = tuple(*[files for (_, _, files) in os.walk('./static/images/done')])
+#     if img_file_name in img_file_names:
+#         return await file('./static/images/done/' + img_file_name)
+#     return empty()
 
 
 # 设置提供图片信息请求接口
+
+'''
+=================================图片相关请求api接口====================================
+'''
+
+
 @app.post('/picture_table')
 async def get_picture_table(request):
     data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
@@ -92,18 +97,71 @@ async def detection_picture(request):
     data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
     # 调用图片检测函数
     annotations_list, detection_relative_result_path = await backend_detection_picture(data)
-    return json({'annotations_list': annotations_list, 'detection_relative_result_path': detection_relative_result_path})
+    return json(
+        {'annotations_list': annotations_list, 'detection_relative_result_path': detection_relative_result_path})
 
+
+'''
+=================================================================用户相关请求api接口===========================================================
+'''
 
 # 设置提供用户信息的接口
 @app.post('/user_is_exist')
-async def get_user_data(request):
+async def user_is_exist_front(request):
     data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
     # 得到数据库连接对象
     connect = get_connect()
     # 得到是否存在用户，如果存在直接返回用户信息
     curr_user = get_user_data_obj_arr(connect, data)
     return json(curr_user)
+
+
+# 得到所有用户列表的函数
+@app.post('/user_list')
+async def user_list_front(request):
+    # 得到关于mysql的连接
+    connect = get_connect()
+    # 得到所有用户信息列表
+    get_users_list = get_all_users(connect)
+    return json(get_users_list)
+
+
+@app.post('/add_user')
+async def add_user_front(request):
+    # 解析前端传来的新增用户信息
+    data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
+    # 得到数据库连接对象
+    connect = get_connect()
+    # 新增用户对象到mysql数据库中
+    add_user_is_flag = add_user(connect, data)
+    print("add_user_is_flag: ", add_user_is_flag)
+    return json(add_user_is_flag)
+
+
+# 删除用户信息函数
+@app.post('/delete_user')
+async def delete_user_front(request):
+    # 解析前端传来的新增用户信息
+    data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
+    # 得到数据库连接对象
+    connect = get_connect()
+    # 新增用户对象到mysql数据库中
+    delete_user_is_flag = delete_user(connect, data)
+    print("delete_user_is_flag: ", delete_user_is_flag)
+    return json(delete_user_is_flag)
+
+
+@app.post('/edit_user')
+async def edit_user_front(request):
+    # 解析前端传来的新增用户信息
+    data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
+    # 得到数据库连接对象
+    connect = get_connect()
+    # 新增用户对象到mysql数据库中
+    edit_user_flag = edit_user(connect, data)
+    print("edit_user_flag: ", edit_user_flag)
+    return json(edit_user_flag)
+
 
 
 if __name__ == '__main__':

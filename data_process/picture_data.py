@@ -1,25 +1,11 @@
+import os.path
+
 import pymysql
 from camera_process import get_photo
 from utils import SERVER_PREFIX
 from utils import delete_file
 from utils import server_abs_path
 from utils import ensure_dir_exists
-
-
-# 得到连接对象函数function
-def get_connect(host='localhost',
-                user='root',
-                password='wyy666888',
-                db='defect_detection_system',
-                charset='utf8'):
-    # 创建数据库连接对象
-    connect = pymysql.connect(host=host,  # 本地数据库
-                              user=user,
-                              password=password,
-                              db=db,
-                              autocommit=True,
-                              charset=charset)  # 服务器名,账户,密码，数据库名称
-    return connect
 
 
 # 得到图片数据的arr对象格式
@@ -83,7 +69,7 @@ def add_picture_by_userinfo(connect, user_id, user_name):
         image_obj = get_photo(user_id, picture_last_key, user_name)
         if image_obj != {}:
             cursor = connect.cursor()
-            print("cursor : ", cursor)
+            # print("cursor : ", cursor)
             sql = "insert into tbl_picture(picture_name, created_time, update_time, picture_width, picture_height, picture_size, picture_format, uploader_id, uploader_name, description, is_test, save_path, result_path, shooting_environment, shooting_direction, shooting_quality, is_detection) values('" + str(
                 image_obj.get('picture_name')) + "', '" + str(image_obj.get('created_time')) + "','" + str(
                 image_obj.get('update_time')) + "', '" + str(image_obj.get('picture_width')) + "', '" + str(
@@ -117,12 +103,14 @@ def delete_picture_by_userid_and_pictureid(connect, user_id, picture_id, save_pa
     try:
         # 删除服务器中存放的图片数据
         save_abs_path = server_abs_path() + save_path
-        result_abs_path = server_abs_path() + save_abs_path
-        # 删除文件
-        delete_file(save_abs_path)
-        delete_file(result_abs_path)
-        # print("@@@ : ", ensure_dir_exists(save_abs_path))
-        # print("--- : ", ensure_dir_exists(result_abs_path))
+        result_abs_path = server_abs_path() + result_path
+        # 删除未检测图片
+        if os.path.exists(save_abs_path):
+            delete_file(save_abs_path)
+        # 删除已检测图片
+        if os.path.exists(result_abs_path):
+            delete_file(result_abs_path)
+
         # 保证原始文件已经删除
         if ensure_dir_exists(save_abs_path) is False:
             # 表示原始图片删除成功
