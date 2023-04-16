@@ -4,27 +4,29 @@ from data_process import *
 
 import json as j_son
 from detection_process import backend_detection_picture
+import os
 
 # 创建app实例对象
 app = Sanic(__name__)
 
-# # 得到未检测图片函数
-# @app.get("/static/images/todo/<img_file_name:path>")
-# async def todo_image(_, img_file_name):
-#     # 每次请求的时候得到所有文件列表
-#     img_file_names = tuple(*[files for (_, _, files) in os.walk('./static/images/todo')])
-#     if img_file_name in img_file_names:
-#         return await file('./static/images/todo/' + img_file_name)
-#     return empty()
-#
-#
-# @app.get("/static/images/done/<img_file_name:path>")
-# async def done_image(_, img_file_name):
-#     # 每次请求的时候得到所有文件列表
-#     img_file_names = tuple(*[files for (_, _, files) in os.walk('./static/images/done')])
-#     if img_file_name in img_file_names:
-#         return await file('./static/images/done/' + img_file_name)
-#     return empty()
+
+# 得到未检测图片函数
+@app.get("/static/images/todo/<img_file_name:path>")
+async def todo_image(_, img_file_name):
+    # 每次请求的时候得到所有文件列表
+    img_file_names = tuple(*[files for (_, _, files) in os.walk('./static/images/todo')])
+    if img_file_name in img_file_names:
+        return await file('./static/images/todo/' + img_file_name)
+    return empty()
+
+
+@app.get("/static/images/done/<img_file_name:path>")
+async def done_image(_, img_file_name):
+    # 每次请求的时候得到所有文件列表
+    img_file_names = tuple(*[files for (_, _, files) in os.walk('./static/images/done')])
+    if img_file_name in img_file_names:
+        return await file('./static/images/done/' + img_file_name)
+    return empty()
 
 
 # 设置提供图片信息请求接口
@@ -163,6 +165,9 @@ async def edit_user_front(request):
     return json(edit_user_flag)
 
 
+# todo functions
+
+
 
 if __name__ == '__main__':
-    app.run(host='127.0.0.1', port=8001)
+    app.run(host='127.0.0.1', port=8081)

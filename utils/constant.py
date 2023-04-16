@@ -1,6 +1,6 @@
 import sys
 
-SERVER_PREFIX = "http://127.0.0.1:8001"
+SERVER_PREFIX = "http://127.0.0.1:8081"
 PATH_SUFFIX = "/static/images/todo/"
 PATH_NEW_PICTURE_SUFFIX = "D:/pycharm_work_place/admin_system_server_v2/static/images/database"
 TEMP_IMAGES = "/static/images/tmp/"  # 用来保存发动机表面的patch图片集

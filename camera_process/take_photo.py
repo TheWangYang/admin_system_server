@@ -29,6 +29,8 @@ def get_photo(user_id, picture_last_key, user_name):
             print("[INFO] taking picture end")
             # 保存生成的新图片到相应文件目录中
             new_file_path, created_time = copy_file(file_dir, save_dir, new_file_name)
+            print("new file path: ", new_file_path)
+            print("created_time: ", created_time)
             if new_file_path != "error":
                 img = Image.open(new_file_path)
                 img_size = img.size  # 大小/尺寸

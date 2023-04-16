@@ -64,9 +64,10 @@ def add_picture_by_userinfo(connect, user_id, user_name):
         # 在调用拍摄图片之前，得到当前用户获得图片的最后一个主键值
         picture_last_key = get_last_key_by_userid(connect, user_id)
         if picture_last_key is None:
-            picture_last_key = 1
+            picture_last_key = 0
         # 调用后端的拍摄图片方法，得到拍摄的图片信息
         image_obj = get_photo(user_id, picture_last_key, user_name)
+        print("image_obj: ", image_obj)
         if image_obj != {}:
             cursor = connect.cursor()
             # print("cursor : ", cursor)
@@ -81,6 +82,7 @@ def add_picture_by_userinfo(connect, user_id, user_name):
                 image_obj.get('shooting_environment')) + "','" + str(image_obj.get('shooting_direction')) + "','" + str(
                 image_obj.get('shooting_quality')) + "','" + str(image_obj.get('is_detection')) + "')"  # sql语句
             flag = cursor.execute(sql)
+            connect.commit()
             if flag == 1:
                 # 插入成功，返回图片的uri
                 return {'new_image_uri': SERVER_PREFIX + image_obj.get('save_path'),
@@ -104,9 +106,11 @@ def delete_picture_by_userid_and_pictureid(connect, user_id, picture_id, save_pa
         # 删除服务器中存放的图片数据
         save_abs_path = server_abs_path() + save_path
         result_abs_path = server_abs_path() + result_path
+
         # 删除未检测图片
         if os.path.exists(save_abs_path):
             delete_file(save_abs_path)
+
         # 删除已检测图片
         if os.path.exists(result_abs_path):
             delete_file(result_abs_path)
@@ -121,6 +125,7 @@ def delete_picture_by_userid_and_pictureid(connect, user_id, picture_id, save_pa
                 sql = "delete from tbl_picture where uploader_id='" + str(user_id) + "' and picture_id='" + str(
                     picture_id) + "'"
                 flag = cursor.execute(sql)
+                connect.commit()
                 if flag == 1:  # 表示删除成功
                     return {'result': "success"}
                 else:
