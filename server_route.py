@@ -155,7 +155,7 @@ async def delete_user_front(request):
 
 @app.post('/edit_user')
 async def edit_user_front(request):
-    # 解析前端传来的新增用户信息
+    # 解析前端传来的修改用户信息
     data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
     # 得到数据库连接对象
     connect = get_connect()
@@ -165,7 +165,53 @@ async def edit_user_front(request):
     return json(edit_user_flag)
 
 
-# todo functions
+# -------------------------------------------------------------提供用户中心服务接口-----------------------------------------------------
+@app.post('/update_user_login_name')
+async def update_login_name_front(request):
+    # 解析前端传来的修改用户名
+    data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
+    # 得到数据库连接对象
+    connect = get_connect()
+    # 新增用户对象到mysql数据库中
+    update_login_name_front_flag = update_user_login_name(connect, data)
+    print("update_login_name_front_flag: ", update_login_name_front_flag)
+    return json(update_login_name_front_flag)
+
+
+@app.post('/update_user_login_password')
+async def update_user_login_password_front(request):
+    # 解析前端传来的修改用户密码
+    data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
+    # 得到数据库连接对象
+    connect = get_connect()
+    # 新增用户对象到mysql数据库中
+    update_user_login_password_front_flag = update_user_login_password(connect, data)
+    print("update_user_login_password_front_flag: ", update_user_login_password_front_flag)
+    return json(update_user_login_password_front_flag)
+
+
+@app.post('/update_user_phone_number')
+async def update_user_phone_number_front(request):
+    # 解析前端传来的修改用户名
+    data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
+    # 得到数据库连接对象
+    connect = get_connect()
+    # 更新用户手机号到mysql数据库中
+    update_user_phone_number_front_flag = update_user_phone_number(connect, data)
+    print("update_user_phone_number_front_flag: ", update_user_phone_number_front_flag)
+    return json(update_user_phone_number_front_flag)
+
+
+@app.post('/update_user_info')
+async def update_user_info_front(request):
+    # 解析前端传来的修改用户名
+    data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
+    # 得到数据库连接对象
+    connect = get_connect()
+    # 新增用户对象到mysql数据库中
+    update_user_info_front_flag = update_user_info(connect, data)
+    print("update_user_info_front_flag: ", update_user_info_front_flag)
+    return json(update_user_info_front_flag)
 
 
 

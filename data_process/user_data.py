@@ -143,6 +143,90 @@ def edit_user(connect, data):
         return {'flag': "error"}
 
 
+# =====================================================设置的用户中心功能的相应api===============================================================
+def update_user_login_name(connect, data):
+    try:
+        cursor = connect.cursor()
+        sql = "UPDATE tbl_user SET login_name='" + data['login_name'] + "'WHERE user_id='" + str(data['user_id']) + "'"
+        flag = cursor.execute(sql)
+        connect.commit()
+        if flag == 1:
+            print("update user login name success.")
+            # 编辑用户成功，返回成功结果
+            return {'flag': "success"}
+        else:
+            # 编辑用户失败，返回failed
+            return {'flag': "failed"}
+    except Exception as e:
+        print("update_user_login_name inner error : ", e)
+        print(f'error file:{e.__traceback__.tb_frame.f_globals["__file__"]}')
+        print(f"error line:{e.__traceback__.tb_lineno}")
+        # 编辑用户出现错误，返回error
+        return {'flag': "error"}
+
+def update_user_login_password(connect, data):
+    try:
+        cursor = connect.cursor()
+        sql = "UPDATE tbl_user SET login_password='" + data['login_password'] + "'WHERE user_id='" + str(data['user_id']) + "'"
+        flag = cursor.execute(sql)
+        connect.commit()
+        if flag == 1:
+            print("update user login password success.")
+            # 编辑用户成功，返回成功结果
+            return {'flag': "success"}
+        else:
+            # 编辑用户失败，返回failed
+            return {'flag': "failed"}
+    except Exception as e:
+        print("update_user_login_password inner error : ", e)
+        print(f'error file:{e.__traceback__.tb_frame.f_globals["__file__"]}')
+        print(f"error line:{e.__traceback__.tb_lineno}")
+        # 编辑用户出现错误，返回error
+        return {'flag': "error"}
+
+def update_user_phone_number(connect, data):
+    try:
+        cursor = connect.cursor()
+        sql = "UPDATE tbl_user SET phone_number='" + data['phone_number'] + "'WHERE user_id='" + str(data['user_id']) + "'"
+        flag = cursor.execute(sql)
+        connect.commit()
+        if flag == 1:
+            print("update user phone_number success.")
+            # 编辑用户成功，返回成功结果
+            return {'flag': "success"}
+        else:
+            # 编辑用户失败，返回failed
+            return {'flag': "failed"}
+    except Exception as e:
+        print("update_user_phone_number inner error : ", e)
+        print(f'error file:{e.__traceback__.tb_frame.f_globals["__file__"]}')
+        print(f"error line:{e.__traceback__.tb_lineno}")
+        # 编辑用户出现错误，返回error
+        return {'flag': "error"}
+
+
+def update_user_info(connect, data):
+    try:
+        cursor = connect.cursor()
+        sql = "UPDATE tbl_user SET info='" + data['info'] + "'WHERE user_id='" + str(data['user_id']) + "'"
+        flag = cursor.execute(sql)
+        connect.commit()
+        if flag == 1:
+            print("update user info success.")
+            # 编辑用户成功，返回成功结果
+            return {'flag': "success"}
+        else:
+            # 编辑用户失败，返回failed
+            return {'flag': "failed"}
+    except Exception as e:
+        print("update_user_info inner error : ", e)
+        print(f'error file:{e.__traceback__.tb_frame.f_globals["__file__"]}')
+        print(f"error line:{e.__traceback__.tb_lineno}")
+        # 编辑用户出现错误，返回error
+        return {'flag': "error"}
+
+
+
 
 
 
