@@ -31,8 +31,8 @@ async def backend_detection_picture(request_data):
     shooting_environment = request_data['shooting_environment']
     shooting_direction = request_data['shooting_direction']
     shooting_quality = request_data['shooting_quality']
-    loginName = request_data['loginName']
-    loginPassword = request_data['loginPassword']
+    loginName = request_data['login_name']
+    loginPassword = request_data['login_password']
     # 得到图片名称
     curr_picture_name = picture_relative_save_path.split("/")[4]
     print("curr_picture_name: {}".format(curr_picture_name))

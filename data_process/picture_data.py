@@ -1,11 +1,8 @@
 import os.path
 
-import pymysql
 from camera_process import get_photo
-from utils import SERVER_PREFIX
-from utils import delete_file
-from utils import server_abs_path
-from utils import ensure_dir_exists
+from utils import *
+import shutil
 
 
 # 得到图片数据的arr对象格式
@@ -103,30 +100,53 @@ def add_picture_by_userinfo(connect, user_id, user_name):
 # 删除图片
 def delete_picture_by_userid_and_pictureid(connect, user_id, picture_id, save_path, result_path):
     try:
+        # 表示删除对应的tmp文件夹中的图片
+        project_path = server_abs_path()
+        print("project_path: ", project_path)
+
         # 删除服务器中存放的图片数据
-        save_abs_path = server_abs_path() + save_path
-        result_abs_path = server_abs_path() + result_path
+        save_abs_path = project_path + save_path
+        # 得到结果图片在服务器上的绝对路径
+        result_abs_path = project_path
+
+        # 判断结果图片路径是否为空
+        if result_path == "":
+            print("result_path is: '", result_path, "'")
+        else:
+            result_abs_path += result_path
+
+        print("save_abs_path: ", save_abs_path)
+        print("result_abs_path: ", result_abs_path)
 
         # 删除未检测图片
         if os.path.exists(save_abs_path):
             delete_file(save_abs_path)
+            print("tmp path: ", project_path + TEMP_IMAGES + save_path.split("/")[-1].split(".")[0])
+            shutil.rmtree(project_path + TEMP_IMAGES + save_path.split("/")[-1].split(".")[0])
 
-        # 删除已检测图片
-        if os.path.exists(result_abs_path):
+        # 删除已检测图片，删除之前判断结果图片是否存在
+        if os.path.exists(result_abs_path) and result_abs_path != server_abs_path():
             delete_file(result_abs_path)
+            # 表示删除对应的tmp_result文件夹中的图片
+            shutil.rmtree(os.path.join(project_path, TEMP_IMAGES_RESULT, save_abs_path.split("/")[-1].split(".")[0]))
 
         # 保证原始文件已经删除
-        if ensure_dir_exists(save_abs_path) is False:
+        if not ensure_dir_exists(save_abs_path):
             # 表示原始图片删除成功
             # 然后接着判断检测结果图片是否存在
-            if ensure_dir_exists(result_abs_path) is False:
+            """
+            如果检测图片路径本来存在 -> 检测结果路径不存在且结果路径不是服务器根路径（表示绝对检测结果路径是服务器绝对路径+检测结果相对路径）
+            如果检测图片绝对路径不存在 -> 检测结果路径存在（表示图片尚未检测就被删除）且结果路径就是服务器根路径
+            """
+            if (ensure_dir_exists(result_abs_path) is False and result_abs_path != server_abs_path()) or \
+                    ensure_dir_exists(result_abs_path) is True and result_abs_path == server_abs_path():
                 # 表示服务器端图片文件已经删除，下面删除数据库中数据
                 cursor = connect.cursor()
                 sql = "delete from tbl_picture where uploader_id='" + str(user_id) + "' and picture_id='" + str(
                     picture_id) + "'"
                 flag = cursor.execute(sql)
                 connect.commit()
-                if flag == 1:  # 表示删除成功
+                if flag == 1:  # 表示丛数据库中删除成功
                     return {'result': "success"}
                 else:
                     return {'result': "failed"}

@@ -32,7 +32,7 @@ async def done_image(_, img_file_name):
 # 设置提供图片信息请求接口
 
 '''
-=================================图片相关请求api接口====================================
+==========================================图片相关请求api接口===========================================
 '''
 
 
@@ -42,7 +42,7 @@ async def get_picture_table(request):
     # 得到数据连接对象
     connect = get_connect()
     # 根据userName和userPwd得到用户Id
-    userId = get_user_id_by_name_and_pwd(connect, data["loginName"], data["loginPassword"])
+    userId = get_user_id_by_name_and_pwd(connect, data["login_name"], data["login_password"])
     if userId is not None:
         # print("userId : ", userId)
         # 得到图片数据数组
@@ -57,9 +57,9 @@ async def get_picture_table(request):
 async def add_picture(request):
     data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
     connect = get_connect()
-    userId = get_user_id_by_name_and_pwd(connect, data["loginName"], data["loginPassword"])
+    userId = get_user_id_by_name_and_pwd(connect, data["login_name"], data["login_password"])
     if userId is not None:
-        return json(add_picture_by_userinfo(connect, userId, data["loginName"]))
+        return json(add_picture_by_userinfo(connect, userId, data["login_name"]))
     else:
         return json({'error': "userId is None"})
 
@@ -69,7 +69,7 @@ async def add_picture(request):
 async def picture_delete(request):
     data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
     connect = get_connect()
-    userId = get_user_id_by_name_and_pwd(connect, data["loginName"], data["loginPassword"])
+    userId = get_user_id_by_name_and_pwd(connect, data[""], data["login_password"])
     if userId is not None:
         return json(delete_picture_by_userid_and_pictureid(connect,
                                                            userId,
@@ -84,7 +84,7 @@ async def picture_delete(request):
 async def picture_edit(request):
     data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
     connect = get_connect()
-    userId = get_user_id_by_name_and_pwd(connect, data['loginName'], data['loginPassword'])
+    userId = get_user_id_by_name_and_pwd(connect, data['login_name'], data['login_password'])
     if userId is not None:
         return json(edit_picture_by_userid_and_pictureid(connect,
                                                          data['description'],

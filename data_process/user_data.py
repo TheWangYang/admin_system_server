@@ -5,13 +5,13 @@ def get_user_data_obj_arr(connect, data):
     # 查询数据测试
     # 查询语句
     # 得到用户登录名和密码
-    loginName = data["loginName"]
-    loginPassword = data["loginPassword"]
+    login_name = data["login_name"]
+    login_password = data["login_password"]
     # print("到这了...")
     try:
         # 得到数据库返回值
         cursor = connect.cursor()
-        sql = "select * from tbl_user where login_name='" + loginName + "' and login_password='" + loginPassword + "'"
+        sql = "select * from tbl_user where login_name='" + login_name + "' and login_password='" + login_password + "'"
         # 执行sql语句
         cursor.execute(sql)
         # 得到行数

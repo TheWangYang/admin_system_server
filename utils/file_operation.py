@@ -52,6 +52,7 @@ def delete_file(file_path):
     try:
         if ensure_dir_exists(file_path):
             os.chmod(file_path, 0o777)
+            print("delete file: {}".format(file_path))
             os.remove(file_path)
             return "success"
         else:
