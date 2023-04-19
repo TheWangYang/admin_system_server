@@ -5,3 +5,6 @@ gen
 .pth
 static/images/
 detection_process/checkpoints/
+mmdeploy/
+detection_process/onnxs/
+
