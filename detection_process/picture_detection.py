@@ -59,6 +59,7 @@ async def backend_detection_picture(request_data):
             images_path_list.append(tmp_path + name)
         # detection_list
         detection_list = [images_path_list[1], images_path_list[2]]
+        # detection_list = images_path_list
         # ------------------------------------------------------use onnx backend do inference-------------------------------------------------------
         from mmdeploy.apis import inference_model
         deploy_cfg = 'mmdeploy/configs/mmdet/detection/detection_onnxruntime_dynamic.py'

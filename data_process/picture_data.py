@@ -171,6 +171,7 @@ def edit_picture_by_userid_and_pictureid(connect, description, user_id, picture_
         sql = "UPDATE tbl_picture SET description='" + description \
               + "'WHERE uploader_id='" + str(user_id) + "' and picture_id='" + str(picture_id) + "'"
         flag = cursor.execute(sql)
+        connect.commit()
         if flag == 1:
             # 修改成功，返回成功结果
             return {'result': "success"}
@@ -197,6 +198,7 @@ def update_picture_respath_env_direction_quality(connect, result_path, env, dire
               + " WHERE uploader_id='" + str(user_id) \
               + "' and save_path='" + str(picture_save_path) + "'"
         flag = cursor.execute(sql)
+        connect.commit()
         if flag == 1:
             # 修改成功，返回成功结果
             return {'result': "success"}

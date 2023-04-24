@@ -69,7 +69,7 @@ async def add_picture(request):
 async def picture_delete(request):
     data = j_son.loads(request.body.decode("utf-8").replace("'", '"'))
     connect = get_connect()
-    userId = get_user_id_by_name_and_pwd(connect, data[""], data["login_password"])
+    userId = get_user_id_by_name_and_pwd(connect, data["login_name"], data["login_password"])
     if userId is not None:
         return json(delete_picture_by_userid_and_pictureid(connect,
                                                            userId,
